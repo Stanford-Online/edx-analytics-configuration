@@ -11,10 +11,11 @@ import os
 import re
 import time
 import traceback
+import pdb
 
 POLLING_INTERVAL_SECONDS = 30
 
-DEFAULT_REGION = 'us-east-1'
+DEFAULT_REGION = 'us-west-1'
 DEFAULT_AMI_VERSION = 'latest'
 DEFAULT_INSTANCE_GROUPS = {}
 
@@ -56,7 +57,10 @@ class ElasticMapreduceCluster():
             self.cluster_id = response.get('JobFlowId')
             changed = True
 
-        self.wait_for_cluster_to_launch(timeout)
+        try:
+            self.wait_for_cluster_to_launch(timeout)
+        except:
+            raise Exception('Response: {}, id: {}'.format(response, self.cluster_id))
         return changed
 
     def get_run_jobflow_parameters(self, **remaining_args):
@@ -342,7 +346,7 @@ def main():
     module = AnsibleModule(
         argument_spec = dict(
             state                = dict(default='present'),
-            region               = dict(default='us-east-1'),
+            region               = dict(default='us-west-1'),
             # Top-level parameters:
             name                 = dict(required=True),
             log_uri              = dict(default=None),

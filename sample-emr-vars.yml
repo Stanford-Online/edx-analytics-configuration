@@ -1,22 +1,22 @@
 ---
 # The following variables should probably be overridden
 name: data.jenkins
-task_instance_num: 1
+task_instance_num: "{{ lookup('env', 'NUM_TASK_INSTANCES') }}" 
 task_instance_type: m1.medium
-task_instance_bid: 0.03
+task_instance_bid: 0.10
 core_instance_num: 1
 core_instance_type: m1.medium
 master_instance_num: 1
-master_instance_type: m1.small
+master_instance_type: m1.medium
 
 # bootstrap_actions:
 #   ganglia:
 #     path: s3://elasticmapreduce/bootstrap-actions/install-ganglia
 bootstrap_actions:
-  configure-hadoop:
-    path: "s3://elasticmapreduce/bootstrap-actions/configure-hadoop"
-    args: [ "-m", "mapred.jobtracker.completeuserjobs.maximum=5", "-m", "mapred.job.tracker.retiredjobs.cache.size=50", "-m", "mapred.max.map.failures.percent=10" ]
-  steps:
+ configure-hadoop:
+   path: s3://elasticmapreduce/bootstrap-actions/configure-hadoop
+   args: [ "-m", "mapred.jobtracker.completeuserjobs.maximum=5", "-m", "mapred.job.tracker.retiredjobs.cache.size=50", "-m", "mapred.max.map.failures.percent=10" ]
+steps:
   - type: hive_install
   - type: script
     name: "Install Sqoop"
@@ -28,4 +28,6 @@ vpc_subnet_id: subnet-9215e8f7
 log_uri: s3://stanford-data-cluster-logs/
 user_info:
   - name: hadoop
-    github: false
+    type: admin
+    authorized_keys:
+    - "{{ lookup('file', '/var/lib/jenkins/.ssh/id_rsa.pub') }}"

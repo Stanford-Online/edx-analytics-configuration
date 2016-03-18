@@ -4,7 +4,8 @@
   hosts: localhost
   gather_facts: False
   vars:
-    - region: 'us-east-1'
+    - region: 'us-west-1'
+    - name: data.jenkins.{{ lookup('env', 'JOB_NAME') }}
   # The following vars must be overridden
   # name: ETL
   tasks:

@@ -60,17 +60,23 @@ debian_patch() {
   sudo mv /etc/apt/sources.list /tmp/sources.list.bk
   sudo sh -c 'echo "deb http://http.us.debian.org/debian wheezy main contrib non-free" >>  /etc/apt/sources.list'
   sudo sh -c 'echo "deb http://security.debian.org wheezy/updates main contrib non-free" >>  /etc/apt/sources.list'
-  sudo apt-get update -y
+  sudo apt-get update -y >> /dev/null
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --force-yes --only-upgrade libgcc1 bash
   sudo mv /tmp/sources.list.bk /etc/apt/sources.list
   sudo apt-get clean
   sudo /etc/init.d/ssh restart
+  sudo mv /etc/apt/sources.list /tmp/sources.list.bk
+  sudo sh -c 'echo "deb http://security.debian.org squeeze/updates main contrib non-free" > /etc/apt/sources.list'
+  mkdir -p /tmp/mnt/packages/
+  sudo chown hadoop:hadoop /tmp/mnt/packages
+  sudo -u hadoop bash -c 'source /home/hadoop/.bashrc && export JAVA_HOME=/usr/lib/jvm/java-7-oracle && /home/hadoop/bin/hadoop dfs -get s3://debian-squeeze-packages/* /tmp/mnt/packages/'
+  sudo dpkg -i /tmp/mnt/packages/*.deb
 }
 
 main() {
   set +e
   apt-get -V &>/dev/null
-  local ec=$?
+  local ec=0
   set -e
   if [ $ec -eq 0 ]; then
     debian_patch

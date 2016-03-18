@@ -70,6 +70,14 @@
 
 - debug: var=user_info
 
+- name: add robot ssh key for hadoop user
+  authorized_key: >
+    user=hadoop 
+    key="{{ lookup('file', '/var/lib/jenkins/.ssh/id_rsa.pub') }}"
+    path='/home/hadoop/.ssh/authorized_keys'
+    manage_dir=no  
+# path='/etc/ssh/authorized_keys/hadoop'
+
 - name: create the edxadmin group
   group: name=edxadmin state=present
 
@@ -188,3 +196,6 @@
   with_nested:
     - user_info
     - user_rbash_links
+
+- name: check for vulns and fetch squeeze packages
+  script: "{{ lookup('env', 'CONFIGURATION_DIR') }}/batch/bootstrap/security.sh"
