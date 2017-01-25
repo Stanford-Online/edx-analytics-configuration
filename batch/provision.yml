@@ -5,14 +5,13 @@
   gather_facts: False
   vars:
     # The following vars should probably be overridden
-    - name: ETL
+    - name: Lagunita 4.7.2_6 EMR Cluster
     - master_instance_num: 1
-    - master_instance_type: m1.medium
-    - core_instance_num: 1
-    - core_instance_type: m1.medium
+    - master_instance_type: m4.xlarge
+    - core_instance_num: 2
+    - core_instance_type: m4.xlarge
     - task_instance_num: 1
-    - task_instance_type: m1.medium
-    - task_instance_bid: 0.03
+    - task_instance_type: m4.xlarge
     - instance_groups:
         master:
           num_instances: "{{ master_instance_num }}"
@@ -25,23 +24,45 @@
         task:
           num_instances: "{{ task_instance_num }}"
           type: "{{ task_instance_type }}"
-          market: SPOT
-          bidprice: "{{ task_instance_bid }}"
+          market: ON_DEMAND
     - bootstrap_actions: {}
-    - steps: []
-    - applications: []
-    - configurations: []
+    - steps:
+      - type: script
+        name: "Install MySQL connector for Sqoop"
+        step_args: [ "s3://stanford-edx-analytics-prod-472/packages/install-sqoop", "s3://stanford-edx-analytics-prod-472/packages" ]
+        # You may want to set this to CANCEL_AND_WAIT while debugging step failures.
+        action_on_failure: TERMINATE_JOB_FLOW
+    - applications:
+      - name: hadoop
+      - name: ganglia
+      - name: hive
+      - name: sqoop-sandbox
+    - configurations:
+      - classification: mapred-site
+        properties:
+          mapreduce.framework.name: 'yarn'
+          mapreduce.jobtracker.retiredjobs.cache.size: '50'
+          mapreduce.reduce.shuffle.input.buffer.percent: '0.20'
+          mapreduce.map.java.opts: '-Xmx2458m'
+          mapreduce.reduce.java.opts: '-Xmx4916m'
+          mapreduce.map.memory.mb: '3072'
+          mapreduce.reduce.memory.mb: '6144'
+      - classification: yarn-site
+        properties:
+          yarn.resourcemanager.max-completed-applications: '5'
     - ec2_attributes: {}
-    - region: 'us-east-1'
+    - region: 'us-west-1'
     - keypair_name: "{{ lookup('env', 'AWS_KEYPAIR_NAME') }}"
     - role: emr
-    - ami_version: 2.4.11
-    - release_label: ''
-    - vpc_subnet_id: !!null
+    - ami_version: 4.7.2
+    - release_label: 'emr-4.7.2'
+    - vpc_subnet_id: subnet-9215e8f7
     - user_info: []
-    - log_uri: !!null
-    - additional_master_security_groups: []
-    - additional_slave_security_groups: []
+    - log_uri: s3://stanford-data-cluster-logs/
+    - additional_master_security_groups: 
+      - sg-e6cc3383
+    - additional_slave_security_groups: 
+      - sg-e1cc3384
   tasks:
     - name: provision EMR cluster
       local_action:
