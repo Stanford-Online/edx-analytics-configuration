@@ -2,7 +2,8 @@
 .PHONY: deps
 
 deps:
-	pip install -q -r requirements.txt
+	pip install -U pip==7.1.2
+	pip install --no-cache-dir -q -r requirements.txt
 
 # Run ansible in local mode so that it runs the emr module in the
 # local python which is likely necessary since that is where the
