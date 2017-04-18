@@ -5,7 +5,7 @@
   gather_facts: False
   vars:
     # The following vars should probably be overridden
-    - name: Lagunita 4.7.2_6 EMR Cluster
+    - name: Lagunita 4.7.2_7 EMR Cluster
     - master_instance_num: 1
     - master_instance_type: m4.xlarge
     - core_instance_num: 2
@@ -27,6 +27,7 @@
           market: ON_DEMAND
     - bootstrap_actions: {}
     - steps:
+      - type: hive_install
       - type: script
         name: "Install MySQL connector for Sqoop"
         step_args: [ "s3://stanford-edx-analytics-prod-472/packages/install-sqoop", "s3://stanford-edx-analytics-prod-472/packages" ]
