@@ -168,6 +168,23 @@ class ElasticMapreduceCluster():
                         # Make sure the float is converted to a string.
                         instance_group['BidPrice'] = str(args['bidprice'])
 
+                # Increase the default EBS volume size
+                if 'volume_size' in args:
+                    volume_size = int(args['volume_size'])
+                    instance_group['EbsConfiguration'] = {
+                        'EbsBlockDeviceConfigs': [
+                            {
+                               'VolumeSpecification': {
+                                   'VolumeType': 'standard',  # gp2, io1, or standard
+                                   'SizeInGB': volume_size,   # in GB
+                                   # 'Iops': number,          # IO operations per second
+                                },
+                                # 'VolumesPerInstance': 1,
+                           },
+                        ],
+                        'EbsOptimized': True,
+                    }
+
                 instance_group_specs.append(instance_group)
 
         return instance_group_specs
