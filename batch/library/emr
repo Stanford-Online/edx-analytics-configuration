@@ -144,22 +144,6 @@ class ElasticMapreduceCluster():
         if hadoop_version:
             instance_specs['HadoopVersion'] = hadoop_version
 
-        # Increase the default EBS volume size
-        volume_size = arguments.pop('volume_size', None)
-        instance_specs['EbsConfiguration'] = {
-            'EbsBlockDeviceConfigs': [
-                {
-                   'VolumeSpecification': {
-                       'VolumeType': 'standard',  # gp2, io1, or standard
-                       'SizeInGB': volume_size,   # in GB
-                       # 'Iops': number,          # IO operations per second
-                    },
-                    # 'VolumesPerInstance': 1,
-               },
-            ],
-            'EbsOptimized': True,
-        }
-
         for arg_name, key_name in SECURITY_GROUPS.iteritems():
             arg_value = arguments.pop(arg_name, None)
             if arg_value is not None:
@@ -183,6 +167,23 @@ class ElasticMapreduceCluster():
                     if 'bidprice' in args:
                         # Make sure the float is converted to a string.
                         instance_group['BidPrice'] = str(args['bidprice'])
+
+                # Increase the default EBS volume size
+                if 'volume_size' in args:
+                    volume_size = args['volume_size']
+                    instance_group['EbsConfiguration'] = {
+                        'EbsBlockDeviceConfigs': [
+                            {
+                               'VolumeSpecification': {
+                                   'VolumeType': 'standard',  # gp2, io1, or standard
+                                   'SizeInGB': volume_size,   # in GB
+                                   # 'Iops': number,          # IO operations per second
+                                },
+                                # 'VolumesPerInstance': 1,
+                           },
+                        ],
+                        'EbsOptimized': True,
+                    }
 
                 instance_group_specs.append(instance_group)
 
