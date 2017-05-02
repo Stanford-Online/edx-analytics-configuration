@@ -170,7 +170,7 @@ class ElasticMapreduceCluster():
 
                 # Increase the default EBS volume size
                 if 'volume_size' in args:
-                    volume_size = args['volume_size']
+                    volume_size = int(args['volume_size'])
                     instance_group['EbsConfiguration'] = {
                         'EbsBlockDeviceConfigs': [
                             {
