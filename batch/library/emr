@@ -175,7 +175,7 @@ class ElasticMapreduceCluster():
                         'EbsBlockDeviceConfigs': [
                             {
                                'VolumeSpecification': {
-                                   'VolumeType': 'standard',  # gp2, io1, or standard
+                                   'VolumeType': 'st1',  # gp2, io1, or standard
                                    'SizeInGB': volume_size,   # in GB
                                    # 'Iops': number,          # IO operations per second
                                 },
