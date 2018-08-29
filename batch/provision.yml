@@ -10,6 +10,9 @@
     - master_instance_type: m1.medium
     - core_instance_num: 1
     - core_instance_type: m1.medium
+    - tags:
+        Key: 'Deployment'
+        Value: "{{ COMMON_DEPLOYMENT }}"
     - task_instance_num: 1
     - task_instance_type: m1.medium
     - task_instance_bid: 0.03
@@ -63,6 +66,7 @@
         ec2_attributes: $ec2_attributes
         additional_master_security_groups: $additional_master_security_groups
         additional_slave_security_groups: $additional_slave_security_groups
+        tags: "{{ tags }}"
       register: jobflow
 
     - name: add master to group

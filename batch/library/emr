@@ -422,6 +422,7 @@ def main():
     name = arguments.pop('name')
     region = arguments.pop('region')
     desired_state = arguments.pop('state')
+    arguments['tags'] = [arguments['tags']]
 
     try:
         cluster = ElasticMapreduceCluster(name, region)
