@@ -41,6 +41,3 @@ VIRTUALENV_EXTRA_ARGS="${VIRTUALENV_EXTRA_ARGS:-}"
 remote-task --job-flow-name="$CLUSTER_NAME" --repo $TASKS_REPO --branch $TASKS_BRANCH --wait --log-path $WORKSPACE/logs/ --remote-name automation --user $TASK_USER --virtualenv-extra-args="$VIRTUALENV_EXTRA_ARGS" --secure-config-branch="$SECURE_BRANCH" --secure-config-repo="$SECURE_REPO" --secure-config="$SECURE_CONFIG" --override-config="$OVERRIDE_CONFIG" "$@"
 
 cat $WORKSPACE/logs/* || true
-
-. $CONF_BIN/activate
-make -C analytics-configuration collect.metrics
